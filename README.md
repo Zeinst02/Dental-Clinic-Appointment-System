@@ -87,41 +87,44 @@ Each role has access to specific features and operations.
 
 ## 🏗️ Project Structure
 
-```text
-ClinicAppointmentSystem/
-│
-├── Controllers/
-├── DTOs/
-├── Data/
-├── Migrations/
-├── Models/
-├── Services/
-├── Properties/
-│
-├── Program.cs
-├── appsettings.json
-├── ClinicAppointmentSystem.csproj
-└── ClinicAppointmentSystem.sln
-``` 
+- Controllers
+- DTOs
+- Data
+- Migrations
+- Models
+- Services
+- Properties
+- Program.cs
+- appsettings.json
+- ClinicAppointmentSystem.csproj
+- ClinicAppointmentSystem.sln
+
 ## 📸 Screenshots
 
 ### Login
-![Login](Screenshots/login.png)
+
+<img src="Screenshots/login.png" alt="Login" width="800">
 
 ### Admin Dashboard
-![Admin Dashboard](Screenshots/admin-dashboard.png)
+
+<img src="Screenshots/admin-dashboard.png" alt="Admin Dashboard" width="800">
 
 ### Doctor Dashboard
-![Doctor Dashboard](Screenshots/doctor-dashboard.png)
+
+<img src="Screenshots/doctor-dashboard.png" alt="Doctor Dashboard" width="800">
 
 ### Patient Dashboard
-![Patient Dashboard](Screenshots/patient-dashboard.png)
+
+<img src="Screenshots/patient-dashboard.png" alt="Patient Dashboard" width="800">
 
 ### User Management
-![User Management](Screenshots/management-user.png)
+
+<img src="Screenshots/management-user.png" alt="User Management" width="800">
 
 ### User Management - Details
-![User Management Details](Screenshots/management-user2.png)
+
+<img src="Screenshots/management-user2.png" alt="User Management Details" width="800">
 
 ### Doctor Appointments
-![Doctor Appointments](Screenshots/doctor-appointment.png)
+
+<img src="Screenshots/doctor-appointment.png" alt="Doctor Appointments" width="800">
