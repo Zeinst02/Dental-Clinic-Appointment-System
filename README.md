@@ -102,3 +102,26 @@ ClinicAppointmentSystem/
 ├── appsettings.json
 ├── ClinicAppointmentSystem.csproj
 └── ClinicAppointmentSystem.sln
+``` 
+## 📸 Screenshots
+
+### Login
+![Login](Screenshots/login.png)
+
+### Admin Dashboard
+![Admin Dashboard](Screenshots/admin-dashboard.png)
+
+### Doctor Dashboard
+![Doctor Dashboard](Screenshots/doctor-dashboard.png)
+
+### Patient Dashboard
+![Patient Dashboard](Screenshots/patient-dashboard.png)
+
+### User Management
+![User Management](Screenshots/management-user.png)
+
+### User Management - Details
+![User Management Details](Screenshots/management-user2.png)
+
+### Doctor Appointments
+![Doctor Appointments](Screenshots/doctor-appointment.png)
