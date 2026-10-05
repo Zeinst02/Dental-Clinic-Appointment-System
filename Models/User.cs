@@ -21,5 +21,7 @@ public class User
 
     public Role Role { get; set; }
 
+    public long? TelegramChatId { get; set; }
+
     public DateTime CreatedAt { get; set; }
 }

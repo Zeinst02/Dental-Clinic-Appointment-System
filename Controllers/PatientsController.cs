@@ -63,4 +63,31 @@ public class PatientsController : ControllerBase
             userId = patient.UserId
         });
     }
+    // GET: api/Patients/telegram/{telegramChatId}
+    [HttpGet("telegram/{telegramChatId}")]
+    public IActionResult GetPatientByTelegram(long telegramChatId)
+    {
+        var patient = _context.Patients
+            .FirstOrDefault(p =>
+                _context.Users.Any(u =>
+                    u.Id == p.UserId &&
+                    u.TelegramChatId == telegramChatId));
+
+        if (patient == null)
+        {
+            return NotFound("Patient not found.");
+        }
+
+        var user = _context.Users
+            .FirstOrDefault(u => u.Id == patient.UserId);
+
+        return Ok(new
+        {
+            patientId = patient.Id,
+            userId = patient.UserId,
+            name = user!.Name,
+            email = user.Email,
+            phone = user.Phone
+        });
+    }
 }

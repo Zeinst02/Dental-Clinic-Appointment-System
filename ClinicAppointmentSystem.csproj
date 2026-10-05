@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>68942a8c-4feb-425f-b1c5-88a0899b9058</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.20" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Telegram.Bot" Version="22.10.3.2" />
   </ItemGroup>
 
 </Project>

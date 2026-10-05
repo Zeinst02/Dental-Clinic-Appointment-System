@@ -4,5 +4,6 @@ public enum Role
 {
     Admin,
     Doctor,
-    Patient
+    Patient,
+    Bot
 }

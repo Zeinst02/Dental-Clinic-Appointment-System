@@ -232,4 +232,69 @@ public class UsersController : ControllerBase
 
         return Ok("User deleted successfully.");
     }
+
+    // POST: api/Users/telegram/link
+    [HttpPost("telegram/link")]
+    public IActionResult LinkTelegram(TelegramLinkRequest request)
+    {
+        var user = _context.Users
+            .FirstOrDefault(u =>
+                u.Email == request.Email &&
+                u.Phone == request.Phone);
+
+        if (user == null)
+        {
+            return NotFound(
+                "No user was found with the provided email and phone number."
+            );
+        }
+
+        if (user.Role != Role.Patient)
+        {
+            return BadRequest(
+                "Only patient accounts can be linked to Telegram."
+            );
+        }
+
+        var existingTelegramUser = _context.Users
+            .FirstOrDefault(u =>
+                u.TelegramChatId == request.TelegramChatId &&
+                u.Id != user.Id);
+
+        if (existingTelegramUser != null)
+        {
+            return BadRequest(
+                "This Telegram account is already linked to another user."
+            );
+        }
+
+        user.TelegramChatId = request.TelegramChatId;
+
+        _context.SaveChanges();
+
+        var patient = _context.Patients
+            .FirstOrDefault(p => p.UserId == user.Id);
+
+        if (patient == null)
+        {
+            return NotFound(
+                "The user is not linked to a patient profile."
+            );
+        }
+
+        return Ok(new
+        {
+            patientId = patient.Id,
+            userId = user.Id,
+            name = user.Name,
+            message = "Telegram account linked successfully."
+        });
+    }
+
+}
+public class TelegramLinkRequest
+{
+    public long TelegramChatId { get; set; }
+    public string Email { get; set; }
+    public string Phone { get; set; }
 }

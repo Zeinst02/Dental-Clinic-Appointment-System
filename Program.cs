@@ -24,6 +24,12 @@ builder.Services.AddDbContext<ClinicDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
+var jwtKeyCheck = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrWhiteSpace(jwtKeyCheck) || jwtKeyCheck.Length < 32)
+{
+    throw new InvalidOperationException(
+        "Jwt:Key is missing or too short. Set it with User Secrets (development) or the Jwt__Key environment variable (production).");
+}
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -51,6 +57,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+//builder.Services.AddHostedService<TelegramBotService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -91,7 +99,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

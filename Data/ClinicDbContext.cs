@@ -58,5 +58,8 @@ public class ClinicDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Phone)
             .IsUnique();
+        modelBuilder.Entity<User>()
+    .HasIndex(u => u.TelegramChatId)
+    .IsUnique();
     }
 }
