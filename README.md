@@ -206,4 +206,40 @@ n8n must reach your API over HTTPS. For local development, use a tunnel such as 
 
 ## 🖼️ Screenshots
 
+### Web app
+
+| Login | Admin dashboard |
+|---|---|
+| ![Login](Screenshots/login.png) | ![Admin dashboard](Screenshots/admin-dashboard.png) |
+
+| Doctor dashboard | Doctor appointments |
+|---|---|
+| ![Doctor dashboard](Screenshots/doctor-dashboard.png) | ![Doctor appointments](Screenshots/doctor-appointment.png) |
+
+| Patient dashboard | User management |
+|---|---|
+| ![Patient dashboard](Screenshots/patient-dashboard.png) | ![User management](Screenshots/management-user.png) |
+
+![User management (details)](Screenshots/management-user2.png)
+
+### Telegram booking bot
+
+| Start | Phone verification |
+|---|---|
+| ![Start](Screenshots/telegram-1-start.png) | ![Phone verification](Screenshots/telegram-2-verify.jpg) |
+
+| Choose a doctor | Choose a day and time |
+|---|---|
+| ![Doctors](Screenshots/telegram-3-doctors.png) | ![Days and times](Screenshots/telegram-4-days-times.png) |
+
+| Confirm and book | My appointments |
+|---|---|
+| ![Confirm](Screenshots/telegram-5-confirm.png) | ![My appointments](Screenshots/telegram-6-my-appointments.png) |
+
+### n8n workflow
+
+![n8n workflow overview](Screenshots/n8n-workflow-overview.png)
+
+![n8n booking branch](Screenshots/n8n-workflow-booking-branch.png)
+
 <!-- Add: a Telegram conversation, the n8n workflow canvas, the web app -->
