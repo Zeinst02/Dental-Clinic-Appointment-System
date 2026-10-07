@@ -1,0 +1,1867 @@
+{
+  "name": "Clinic Booking",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        -48
+      ],
+      "id": "86147c14-b332-4176-9ebc-397e208b640e",
+      "name": "Telegram Trigger",
+      "webhookId": "ece6e5c9-c066-48fa-9694-51adba3a44bf",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/Users/login",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        -48
+      ],
+      "id": "473ce3ee-6b12-4088-bff0-27cab0703872",
+      "name": "Login",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "eMKPHwBH2jXtHG15",
+          "name": "Clinic Bot Login"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d6c1e51b-d0ff-4aae-881a-e5388b99cbc0",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message?.text }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        848,
+        240
+      ],
+      "id": "8e8fc951-1200-4afa-b8ac-deb0d9056971",
+      "name": "Is Start"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/bot/patients/{{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1072,
+        144
+      ],
+      "id": "c74b9898-cf63-4a9e-b3c0-aa5013c26a70",
+      "name": "Get Patient",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Hello! To complete your registration, press the button below to share your phone number.",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Share my phone number 📱",
+                    "additionalFields": {
+                      "request_contact": true
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {
+          "resize_keyboard": true,
+          "one_time_keyboard": true
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1296,
+        240
+      ],
+      "id": "441da01e-d681-4b7c-8ac0-234791cc287d",
+      "name": "Ask Contact",
+      "webhookId": "824346f7-c29c-47a5-acd5-f6ecb0be065a",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Welcome! Do you want to book an appointment?",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Book an appointment 📅",
+                    "additionalFields": {
+                      "callback_data": "book"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "My appointments 🗓️",
+                    "additionalFields": {
+                      "callback_data": "my"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1296,
+        48
+      ],
+      "id": "607b8553-edd3-41f6-b5b5-08aec64d58cf",
+      "name": "Welcome",
+      "webhookId": "13536158-cbaa-4500-9733-88f8ef457464",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a2586dbc-f96d-4bc4-a97f-8b5e56529c36",
+              "leftValue": "={{ !!$('Telegram Trigger').item.json.message?.contact && $('Telegram Trigger').item.json.message.contact.user_id === $('Telegram Trigger').item.json.message.from.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1072,
+        432
+      ],
+      "id": "4a3e26da-bc04-4a9c-bbc7-9e4679d04c42",
+      "name": "Is Own Contact"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/bot/link",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  telegramChatId: $('Telegram Trigger').item.json.message.chat.id,\n  phone: $('Telegram Trigger').item.json.message.contact.phone_number\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1296,
+        432
+      ],
+      "id": "58ad1ef4-15cb-4f9b-a2ab-a3f250044b4a",
+      "name": "Link Patient",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Welcome, {{ $('Link Patient').item.json.name }}! Would you like to book an appointment?",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Book an appointment 📅",
+                    "additionalFields": {
+                      "callback_data": "book"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "My appointments 🗓️",
+                    "additionalFields": {
+                      "callback_data": "my"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        320
+      ],
+      "id": "23a567d1-fe97-483f-9f9a-b7581bad754e",
+      "name": "Registered",
+      "webhookId": "ebe83699-1adb-4ec4-b0c5-46445ddfb9bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "de7a91eb-eb25-4fd9-a916-1a28d6fc9603",
+              "leftValue": "={{ !!$('Telegram Trigger').item.json.callback_query }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        624,
+        -48
+      ],
+      "id": "61efbac0-a6b5-4b89-9c87-c13274a33bac",
+      "name": "Is Callback"
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $('Telegram Trigger').item.json.callback_query.id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        -336
+      ],
+      "id": "244d737f-6cb6-4bc3-8bfd-3bd11e4ab63d",
+      "name": "Answer Query a callback",
+      "webhookId": "621828c9-c85d-41ec-85dc-3a8b11106ea8",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/bot/doctors",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1264,
+        -160
+      ],
+      "id": "5da19088-3fdb-47cd-b705-30857903053e",
+      "name": "Get Doctors"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "={{ $json.name }} — {{ $json.specialty }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Select",
+                    "additionalFields": {
+                      "callback_data": "=d:{{ $json.doctorId }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1520,
+        -144
+      ],
+      "id": "0a380347-406e-403e-8fe4-85c3bc0bcd37",
+      "name": "Send a text message",
+      "webhookId": "7de3ccaf-5da6-435d-bd67-197de7f5d4a8",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b1f0c7e2-3a4d-4c55-9a11-5d2f6e0a7c01",
+              "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data }}",
+              "operator": {
+                "name": "filter.operator.equals",
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "book"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "bff07687-c345-4889-8d44-8f235d956094",
+      "name": "Is Book",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1072,
+        -336
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c2a1d7f3-5b6e-4d10-8e22-7a3b9f1c0d02",
+              "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data.startsWith('d:') }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "f0802108-b99f-45f6-8cfa-780a69358bc5",
+      "name": "Is Doctor Pick",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1296,
+        -464
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/bot/doctors/{{ $('Telegram Trigger').item.json.callback_query.data.split(':')[1] }}/available-days?count=5",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2e3e1885-629d-4a4f-8f79-c6400c531e78",
+      "name": "Get Available Days",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1584,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "d3b2e8a4-6c7f-4e21-9f33-8b4c0a2d1e03",
+              "leftValue": "={{ $json.days.length >= 5 }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "0f49f057-0dfe-47f1-bdc3-7536cfbb0a51",
+      "name": "Has Enough Days",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1824,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "Sorry, this doctor has no availability in the coming weeks. Please choose another doctor.",
+        "additionalFields": {}
+      },
+      "id": "90c35c4f-dd7f-4a12-8bb2-5254d33ea8e2",
+      "name": "No Days",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        32
+      ],
+      "webhookId": "4d3eb21e-d804-4c7d-be3a-020a207ca31a",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e4c3f9b5-7d80-4f32-a044-9c5d1b3e2f04",
+              "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data.startsWith('t:') }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "3c717c85-e93b-4ee4-be02-90936c7640a4",
+      "name": "Is Date Pick",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1520,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/bot/availability?doctorId={{ $('Telegram Trigger').item.json.callback_query.data.split(':')[1] }}&date={{ $('Telegram Trigger').item.json.callback_query.data.split(':')[2] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f351fd3b-25ce-43e6-abe0-b09f767410d8",
+      "name": "Get Slots",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1744,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "f5d4a0c6-8e91-4a43-b155-0d6e2c4f3a05",
+              "leftValue": "={{ $json.slots.length > 0 }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "edbbf304-014d-4db6-98a7-17125ec77c65",
+      "name": "Has Slots",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2032,
+        -432
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "Sorry, there are no free times on that day. Please pick another date.",
+        "additionalFields": {}
+      },
+      "id": "6e6d59f1-0ed0-4220-b103-8e38d1fb2855",
+      "name": "No Slots",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2464,
+        -224
+      ],
+      "webhookId": "6d007407-8eb2-472e-ae9e-c1add0996685",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  chat_id: $('Telegram Trigger').item.json.callback_query.message.chat.id,\n  text: 'Available times on ' + DateTime.fromISO($json.date).toFormat('cccc, dd LLL') + ':',\n  reply_markup: {\n    inline_keyboard: Array.from({ length: Math.ceil($json.slots.length / 3) }, (_, i) =>\n      $json.slots.slice(i * 3, i * 3 + 3).map(s => ({\n        text: s,\n        callback_data: 's:' + $json.doctorId + ':' + $json.date + ':' + s.replace(':', '')\n      }))\n    )\n  }\n}) }}",
+        "options": {}
+      },
+      "id": "77a1ac89-6e2f-4df7-8b83-a77b8cb7cba7",
+      "name": "Choose Time",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2624,
+        -512
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "a6e5b1d7-9fa2-4b54-a266-1e7f3d5a4b06",
+              "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data.startsWith('s:') }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "16d6d877-4866-4ac7-a4f7-a80ded7e3626",
+      "name": "Is Time Pick",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1488,
+        -816
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "={{ (() => { const p = $('Telegram Trigger').item.json.callback_query.data.split(':'); return 'Confirm your appointment on ' + DateTime.fromISO(p[2]).toFormat('cccc, dd LLL') + ' at ' + p[3].slice(0, 2) + ':' + p[3].slice(2) + '?'; })() }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Confirm",
+                    "additionalFields": {
+                      "callback_data": "={{ $('Telegram Trigger').item.json.callback_query.data.replace('s:', 'ok:') }}"
+                    }
+                  },
+                  {
+                    "text": "❌ Cancel",
+                    "additionalFields": {
+                      "callback_data": "no"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "id": "3315c989-1a09-4fa2-a269-8247c9872bf4",
+      "name": "Confirm Booking",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1744,
+        -1008
+      ],
+      "webhookId": "05e7cc4a-b438-4c53-a7a9-cfd0ce15e655",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b7f6c2e8-0ab3-4c65-b377-2f8a4e6b5c07",
+              "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data.startsWith('ok:') }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "cbd04964-4949-4ab4-9485-dae9a2ca9ac8",
+      "name": "Is Confirm",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1728,
+        -784
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/bot/appointments",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => { const p = $('Telegram Trigger').item.json.callback_query.data.split(':'); return JSON.stringify({ telegramChatId: $('Telegram Trigger').item.json.callback_query.message.chat.id, doctorId: Number(p[1]), startTime: p[2] + 'T' + p[3].slice(0, 2) + ':' + p[3].slice(2) + ':00' }); })() }}",
+        "options": {}
+      },
+      "id": "e10a1677-53d8-43a9-8256-7c3c6d4bc25a",
+      "name": "Book Appointment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2064,
+        -960
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "=✅ Your appointment is confirmed for {{ DateTime.fromISO($json.startTime).toFormat('cccc, dd LLL') }} at {{ DateTime.fromISO($json.startTime).toFormat('HH:mm') }}. See you then!",
+        "additionalFields": {}
+      },
+      "id": "a3d3bef1-f83d-4e14-b07b-2a91caf17a3f",
+      "name": "Booked",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2368,
+        -976
+      ],
+      "webhookId": "467cc046-13a7-47d5-9f6c-da814c924bef",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "={{ $json.error?.message?.includes('already_booked_that_day') ? 'You already have an appointment on that day. Please choose another day, or cancel your existing appointment first.' : $json.error?.message?.includes('slot_taken') ? 'Sorry, that time was just taken. Please send /start and pick another time.' : 'Sorry, we could not complete your booking. Please send /start and try again.' }}",
+        "additionalFields": {}
+      },
+      "id": "c5164fc2-0672-465b-ba41-de77d44e6dd7",
+      "name": "Booking Failed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2528,
+        -816
+      ],
+      "webhookId": "487605ec-8cee-4672-a054-29471396057d",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "Booking cancelled. Send /start whenever you want to book again.",
+        "additionalFields": {}
+      },
+      "id": "ccf93897-5f89-4080-965c-715d95ea409d",
+      "name": "Cancelled",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2000,
+        -768
+      ],
+      "webhookId": "e48d1af3-ab98-46a8-a992-f5bc150c0b34",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "Choose a date:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ DateTime.fromISO($json.days[0]).toFormat('ccc, dd LLL') }}",
+                    "additionalFields": {
+                      "callback_data": "=t:{{ $json.doctorId }}:{{ $json.days[0] }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ DateTime.fromISO($json.days[1]).toFormat('ccc, dd LLL') }}",
+                    "additionalFields": {
+                      "callback_data": "=t:{{ $json.doctorId }}:{{ $json.days[1] }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ DateTime.fromISO($json.days[2]).toFormat('ccc, dd LLL') }}",
+                    "additionalFields": {
+                      "callback_data": "=t:{{ $json.doctorId }}:{{ $json.days[2] }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ DateTime.fromISO($json.days[3]).toFormat('ccc, dd LLL') }}",
+                    "additionalFields": {
+                      "callback_data": "=t:{{ $json.doctorId }}:{{ $json.days[3] }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ DateTime.fromISO($json.days[4]).toFormat('ccc, dd LLL') }}",
+                    "additionalFields": {
+                      "callback_data": "=t:{{ $json.doctorId }}:{{ $json.days[4] }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "id": "3c35fb90-87dc-4d36-b777-be8e6b7b4e82",
+      "name": "Choose Date",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        -160
+      ],
+      "webhookId": "a0ce3e8f-3ba7-4d2d-9465-d73af1dd7c16",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.error?.message?.includes('linked_to_another_account') ? 'This number is already linked to another Telegram account. Please contact the clinic.' : 'Sorry, we could not find your number in our records. Please contact the clinic to be registered first.' }}",
+        "additionalFields": {}
+      },
+      "id": "764775ab-1c21-481f-bebc-39a95869dff7",
+      "name": "Not Registered",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1696,
+        496
+      ],
+      "webhookId": "3ad84db0-3492-4049-80dc-9445530e2d6c",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "a8b7c3d9-1bc4-4d76-8c88-3a9b5f7c6d08",
+              "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data === 'my' }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "ed7a09a6-ea63-4766-bfb4-dc646102c4e3",
+      "name": "Is My",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1968,
+        -560
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/bot/appointments/{{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1ff5eb60-5869-4772-b737-8606a0366b43",
+      "name": "Get My Appointments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2208,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b9c8d4e0-2cd5-4e87-9d99-4b0c6a8d7e09",
+              "leftValue": "={{ $json.appointments.length > 0 }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "f5aa52af-8ffc-4db5-98b5-d3118ba18a3c",
+      "name": "Has Appointments",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2448,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      },
+      "id": "baf8f644-b3f2-41f6-8c60-bb2f34e34159",
+      "name": "Split Appointments",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2688,
+        -720
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "={{ DateTime.fromISO($json.startTime).toFormat('cccc, dd LLL') }} at {{ DateTime.fromISO($json.startTime).toFormat('HH:mm') }}\n{{ $json.doctorName }} — {{ $json.specialty }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Cancel this appointment",
+                    "additionalFields": {
+                      "callback_data": "=c:{{ $json.appointmentId }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "id": "6bd45b84-54ce-4922-aca2-f26d8b94db86",
+      "name": "Show Appointment",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2928,
+        -720
+      ],
+      "webhookId": "527064ad-6045-4c71-94a1-ca5cd63b7a47",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "You have no upcoming appointments. Send /start to book one.",
+        "additionalFields": {}
+      },
+      "id": "eb3fed88-7c85-4085-9338-e6a88972cb2e",
+      "name": "No Appointments",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2912,
+        -480
+      ],
+      "webhookId": "5be22818-e3e0-450c-97f3-84e667dfc804",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c0d9e5f1-3de6-4f98-ae00-5c1d7b9e8f10",
+              "leftValue": "={{ $('Telegram Trigger').item.json.callback_query.data.startsWith('c:') }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "3f4b0927-88b9-4a10-b350-4579556ff4ef",
+      "name": "Is Cancel Pick",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2208,
+        -480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Config').first().json.apiBaseUrl }}/api/bot/appointments/{{ $('Telegram Trigger').item.json.callback_query.data.split(':')[1] }}/cancel",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ telegramChatId: $('Telegram Trigger').item.json.callback_query.message.chat.id }) }}",
+        "options": {}
+      },
+      "id": "abf9bbc9-d3b3-4024-a89f-cda0a103ee5e",
+      "name": "Cancel Appointment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2576,
+        -352
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "=✅ Your appointment on {{ DateTime.fromISO($json.startTime).toFormat('cccc, dd LLL') }} at {{ DateTime.fromISO($json.startTime).toFormat('HH:mm') }} has been cancelled.",
+        "additionalFields": {}
+      },
+      "id": "bd0746bf-ce85-45cf-a8c8-1458c87ace59",
+      "name": "Cancel Done",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3088,
+        -352
+      ],
+      "webhookId": "9ce2dd9a-dbb3-47ba-b760-d2f5d09ab84b",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.callback_query.message.chat.id }}",
+        "text": "Sorry, we couldn't cancel that appointment. It may have already been cancelled or it has passed.",
+        "additionalFields": {}
+      },
+      "id": "daa3ea86-74b3-4aff-a8af-fdbadf087299",
+      "name": "Cancel Failed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2832,
+        -224
+      ],
+      "webhookId": "b79d5769-5ad1-4067-b964-7d4d1c3c8785",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1e0f6a2-4ef7-4a09-bf11-6d2e8c0f9a11",
+              "name": "apiBaseUrl",
+              "type": "string",
+              "value": "https://YOUR-API-HOST"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6ecd5d0f-f437-42fc-9245-fab8705557b3",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e2f1a7b3-5fa8-4b1a-8022-7e3f9d1a0b12",
+              "leftValue": "={{ $json.error?.message?.includes('patient_not_found') }}",
+              "operator": {
+                "name": "filter.operator.true",
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "ff43fbb5-2ffe-4347-b3cb-9fa3a070892b",
+      "name": "Is Not Registered",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1360,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Sorry, something went wrong on our side. Please try again in a few minutes.",
+        "additionalFields": {}
+      },
+      "id": "8407e8de-ad76-483f-a3a9-2ae47aef236d",
+      "name": "Service Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        688
+      ],
+      "webhookId": "74881c10-c196-40d5-8fc8-67482a272858",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Your number is verified ✅",
+        "replyMarkup": "replyKeyboardRemove",
+        "replyKeyboardRemove": {
+          "remove_keyboard": true
+        },
+        "additionalFields": {}
+      },
+      "id": "c6dbdcbf-cc71-4fa7-9f67-2331518d57d8",
+      "name": "Remove Keyboard",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1904,
+        320
+      ],
+      "webhookId": "b0dca4b7-12e0-4f2a-b75e-1f325336a623",
+      "credentials": {
+        "telegramApi": {
+          "id": "OA8uZ4ciSHhrYXr6",
+          "name": "Telegram account 4"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Login": {
+      "main": [
+        [
+          {
+            "node": "Is Callback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Start": {
+      "main": [
+        [
+          {
+            "node": "Get Patient",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Own Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Patient": {
+      "main": [
+        [
+          {
+            "node": "Welcome",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Not Registered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Own Contact": {
+      "main": [
+        [
+          {
+            "node": "Link Patient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Callback": {
+      "main": [
+        [
+          {
+            "node": "Answer Query a callback",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Doctors": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Query a callback": {
+      "main": [
+        [
+          {
+            "node": "Is Book",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Book": {
+      "main": [
+        [
+          {
+            "node": "Get Doctors",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Doctor Pick",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Doctor Pick": {
+      "main": [
+        [
+          {
+            "node": "Get Available Days",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Date Pick",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Available Days": {
+      "main": [
+        [
+          {
+            "node": "Has Enough Days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Enough Days": {
+      "main": [
+        [
+          {
+            "node": "Choose Date",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Date Pick": {
+      "main": [
+        [
+          {
+            "node": "Get Slots",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Time Pick",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Slots": {
+      "main": [
+        [
+          {
+            "node": "Has Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Slots": {
+      "main": [
+        [
+          {
+            "node": "Choose Time",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Time Pick": {
+      "main": [
+        [
+          {
+            "node": "Confirm Booking",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Confirm",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Confirm": {
+      "main": [
+        [
+          {
+            "node": "Book Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is My",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book Appointment": {
+      "main": [
+        [
+          {
+            "node": "Booked",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Booking Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Link Patient": {
+      "main": [
+        [
+          {
+            "node": "Remove Keyboard",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not Registered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is My": {
+      "main": [
+        [
+          {
+            "node": "Get My Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Cancel Pick",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get My Appointments": {
+      "main": [
+        [
+          {
+            "node": "Has Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Appointments": {
+      "main": [
+        [
+          {
+            "node": "Split Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Appointments": {
+      "main": [
+        [
+          {
+            "node": "Show Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Cancel Pick": {
+      "main": [
+        [
+          {
+            "node": "Cancel Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancel Appointment": {
+      "main": [
+        [
+          {
+            "node": "Cancel Done",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancel Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Not Registered": {
+      "main": [
+        [
+          {
+            "node": "Ask Contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Service Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Keyboard": {
+      "main": [
+        [
+          {
+            "node": "Registered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "8cd4e2ae-12be-43a2-a42e-ced6f429c1b3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "70daac67ee7efb9e6560e9520c4d48f2e0fa34d3a008ad920a35d93725c5a38f"
+  },
+  "nodeGroups": [],
+  "id": "BqUTqkJdwHikJV0R",
+  "tags": []
+}
