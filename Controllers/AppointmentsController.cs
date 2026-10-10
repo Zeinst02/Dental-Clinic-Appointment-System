@@ -453,4 +453,29 @@ public class AppointmentsController : ControllerBase
 
         return null;
     }
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public IActionResult DeleteAppointment(int id)
+    {
+        var appointment = _context.Appointments
+            .FirstOrDefault(a => a.Id == id);
+
+        if (appointment == null)
+        {
+            return NotFound("Appointment not found.");
+        }
+
+        if (appointment.Status != AppointmentStatus.Completed &&
+            appointment.Status != AppointmentStatus.Cancelled)
+        {
+            return BadRequest(
+                "Only completed or cancelled appointments can be deleted."
+            );
+        }
+
+        _context.Appointments.Remove(appointment);
+        _context.SaveChanges();
+
+        return Ok("Appointment deleted successfully.");
+    }
 }
